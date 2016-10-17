@@ -1,4 +1,5 @@
 import math
+import matplotlib.pyplot as plt
 # def f1(filePath, meanArea, seaHeight):
 # #Assumes filePath is correct and other parameters are valid.
 #   aboveSea = 0
@@ -37,7 +38,8 @@ import math
 # 	plt.xlabel('sea level increase')
 # 	plt.show()
 
-def f3(filePath, height = 0):
+
+def f3(filePath, height = -1, interval = 0.01):
 	longitudeList = []
 	latitudeList = [0]
 	elevationList = []
@@ -88,39 +90,92 @@ def f3(filePath, height = 0):
 		horizontalSpacingList.append(40075/360 * abs(math.cos(math.radians(lat))) * averageLongitude)
 	averageHorizontalSpacing = sum(horizontalSpacingList) / len(horizontalSpacingList)
 
+	if height >= 0:
+		aboveSea1 = 0
+		totalLand1 = 0
+		
+		aboveSea2 = 0
+		totalLand2 = 0
+		for i in range(0,len(latitudeList)):
+			for j in range(0,len(longitudeList)):
+				if elevationList[i*len(longitudeList)+j] > 0.0:
+					# print '.',
+					totalLand1 += verticalSpacing*averageHorizontalSpacing
+					totalLand2 += verticalSpacing*horizontalSpacingList[i]
+					if elevationList[i*len(longitudeList)+j] > height:
+						aboveSea1 += verticalSpacing*averageHorizontalSpacing
+						aboveSea2 += verticalSpacing*horizontalSpacingList[i]
+				# else:
+				# 	print ' ',
+			# print(' ')
+
+		print("First functionality")
+		print("===================")
+		print("First Approximation:")
+		print("--------------------")
+		print("Area above sea level: {:.2f} km^2".format(aboveSea1))
+		print("Percent area above sea level: {:.2f}%".format(aboveSea1/totalLand1*100))
+		print("\nSecond Approximation")
+		print("--------------------")
+		print("Area above sea level: {:.2f} km^2".format(aboveSea2))
+		print("Percent area above sea level: {:.2f}%".format(aboveSea2/totalLand2*100))
+	elif height == -1:
+		maxSeaLevel = 0	
+		for el in elevationList:
+			maxSeaLevel = max(el, maxSeaLevel)
+				
+		# print (maxSeaLevel)
+		total_area1 = []
+		total_area2 = []
+		intervalList = []
+		spacing = maxSeaLevel * interval
+		for k in range(0, int(1 / interval) + 1):
+			#(area, percent) = f1(filePath, meanArea, i * spacing)
+			# --- ABSTRACT ---
+			heightm = k * spacing
+			aboveSea1 = 0
+			totalLand1 = 0
+			
+			aboveSea2 = 0
+			totalLand2 = 0
+			for i in range(0,len(latitudeList)):
+				for j in range(0,len(longitudeList)):
+					if elevationList[i*len(longitudeList)+j] > 0.0:
+						# print '.',
+						totalLand1 += verticalSpacing*averageHorizontalSpacing
+						totalLand2 += verticalSpacing*horizontalSpacingList[i]
+						if elevationList[i*len(longitudeList)+j] > heightm:
+							aboveSea1 += verticalSpacing*averageHorizontalSpacing
+							aboveSea2 += verticalSpacing*horizontalSpacingList[i]
+					# else:
+					# 	print ' ',
+				# print(' ')
+			# --- END ABSTRACT ---
+
+			print("Approximation 1: at sea level {:+.2f}: {:.1f} km^2 ({:.2f}%)".format(i * spacing, aboveSea1, aboveSea1/totalLand1*100))
+			print("Approximation 2: at sea level {:+.2f}: {:.1f} km^2 ({:.2f}%)".format(i * spacing, aboveSea2, aboveSea1/totalLand1*100))
+			
+			total_area1.append(aboveSea1)
+			total_area2.append(aboveSea2)
+			
+			intervalList.append(k * spacing)
 	
-	aboveSea1 = 0
-	totalLand1 = 0
-	
-	aboveSea2 = 0
-	totalLand2 = 0
-	for i in range(0,len(latitudeList)):
-		for j in range(0,len(longitudeList)):
-			if elevationList[i*len(longitudeList)+j] > 0.0:
-				# print '.',
-				totalLand1 += verticalSpacing*averageHorizontalSpacing
-				totalLand2 += verticalSpacing*horizontalSpacingList[i]
-				if elevationList[i*len(longitudeList)+j] > height:
-					aboveSea1 += verticalSpacing*averageHorizontalSpacing
-					aboveSea2 += verticalSpacing*horizontalSpacingList[i]
-			# else:
-			# 	print ' ',
-		# print(' ')
+	# plotting the graph
+	# plt.figure(1)
+	plt.subplot(121)
+	plt.plot(intervalList, total_area1)
+	plt.title('Approximation 1')
+	plt.ylabel('area above water')
+	plt.xlabel('sea level increase')
 
-	print("First functionality")
-	print("===================")
-	print("First Approximation:")
-	print("--------------------")
-	print("Area above sea level: {:.2f} km^2".format(aboveSea1))
-	print("Percent area above sea level: {:.2f}%".format(aboveSea1/totalLand1*100))
-	print("\nSecond Approximation")
-	print("--------------------")
-	print("Area above sea level: {:.2f} km^2".format(aboveSea2))
-	print("Percent area above sea level: {:.2f}%".format(aboveSea2/totalLand2*100))
+	# plt.figure(2)
+	plt.subplot(122)
+	plt.plot(intervalList, total_area2)
+	plt.title('Approximation 2')
+	plt.ylabel('area above water')
+	plt.xlabel('sea level increase')
 
-	# print(aboveSea)
-	# print(totalLand)
-	# print(aboveSea/totalLand*100)
-	# while
+	plt.show()
 
-f3('sydney250m.txt', 2)
+
+f3('sydney250m.txt')
