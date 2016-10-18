@@ -1,42 +1,5 @@
 import math
 import matplotlib.pyplot as plt
-# def f1(filePath, meanArea, seaHeight):
-# #Assumes filePath is correct and other parameters are valid.
-#   aboveSea = 0
-#   totalLand = 0
-#   with open (filePath) as f: #iterate through lines of data file
-#     for line in f:
-#       tokens = line.split()
-#       z = float(tokens[2])
-#       if z > seaHeight:
-#         aboveSea += meanArea
-#       if z > 0:
-#         totalLand += meanArea
-#   return (round(aboveSea,4), round(aboveSea/totalLand * 100,2))
-
-# def f2(filePath, meanArea, interval):
-# 	maxSeaLevel = 0	
-# 	with open (filePath) as f: #iterate through lines of data file
-# 		for line in f:
-# 			tokens = line.split()
-# 			z = float(tokens[2])
-# 			maxSeaLevel = max(z, maxSeaLevel)
-			
-# 	# print (maxSeaLevel)
-# 	total_area = []
-# 	intervalList = []
-# 	spacing = maxSeaLevel * interval
-# 	for i in range(0, int(1 / interval) + 1):
-# 		(area, percent) = f1(filePath, meanArea, i * spacing)
-# 		print("at sea level {:+.2f}: {:.1f} km^2 ({:.2f}%)".format(i * spacing, area, percent))
-# 		total_area.append(area)
-# 		intervalList.append(i * spacing)
-	
-# 	# plotting the graph
-# 	plt.plot(intervalList, total_area)
-# 	plt.ylabel('area above water')
-# 	plt.xlabel('sea level increase')
-# 	plt.show()
 
 
 def f3(filePath, height = -1, interval = 0.01):
@@ -95,6 +58,7 @@ def f3(filePath, height = -1, interval = 0.01):
 		totalLand1 = 0
 		aboveSea2 = 0
 		totalLand2 = 0
+		SetList = []
 		for i in range(0,len(latitudeList)):
 			for j in range(0,len(longitudeList)):
 				if elevationList[i*len(longitudeList)+j] > 0.0:
@@ -104,10 +68,58 @@ def f3(filePath, height = -1, interval = 0.01):
 					if elevationList[i*len(longitudeList)+j] > height:
 						aboveSea1 += verticalSpacing*averageHorizontalSpacing
 						aboveSea2 += verticalSpacing*horizontalSpacingList[i]
+						
+						#Counting Island Stuff
+						
+						FoundSets = []
+						if i != 0 and j != 0:
+							for l in range(0,len(SetList)):
+								if ( (i,j-1) in SetList[l] ) or ( (i-1,j-1) in SetList[l] ) or ( (i-1,j) in SetList[l] ) or ( (i-1,j+1) in SetList[l] ):
+									FoundSets.append(l)
+							if len(FoundSets) == 0:
+								s = {(i,j)}
+								SetList.append(s)
+							elif len(FoundSets) == 1:
+								SetList[FoundSets[0]].add((i,j))
+							elif len(FoundSets) == 2:
+								s = SetList[FoundSets[0]].union(SetList[FoundSets[1]])
+								if FoundSets[0] < FoundSets[1]:
+									del SetList[FoundSets[1]]
+									del SetList[FoundSets[0]]
+								elif FoundSets[0] > FoundSets[1]:
+									del SetList[FoundSets[0]]
+									del SetList[FoundSets[1]]
+								s.add((i,j))
+								SetList.append(s)
+							elif len(FoundSets) > 2:
+								print("IMPOSSIBLE, YOU JUST BROKE LOGIC")
+						elif i == 0 and j != 0:
+							for l in range(0,len(SetList)):
+								if ( (i,j-1) in SetList[l] ):
+									FoundSets.append(l)
+							if len(FoundSets) == 0:
+								s = {(i,j)}
+								SetList.append(s)
+							elif len(FoundSets) == 1:
+								SetList[FoundSets[0]].add((i,j))
+						elif i != 0 and j == 0:
+							for l in range(0,len(SetList)):
+								if ( (i-1,j) in SetList[l] ) or ( (i-1,j+1) in SetList[l] ):
+									FoundSets.append(l)
+							if len(FoundSets) == 0:
+								s = {(i,j)}
+								SetList.append(s)
+							elif len(FoundSets) == 1:
+								SetList[FoundSets[0]].add((i,j))
+						elif i == 0 and j == 0:
+							SetList.append({(i,j)})
+						#END SET COUNTING		
+						
+						
 				# else:
 				# 	print ' ',
 			# print(' ')
-
+			
 		print("First functionality")
 		print("===================")
 		print("First Approximation:")
@@ -118,6 +130,8 @@ def f3(filePath, height = -1, interval = 0.01):
 		print("--------------------")
 		print("Area above sea level: {:.2f} km^2".format(aboveSea2))
 		print("Percent area above sea level: {:.2f}%".format(aboveSea2/totalLand2*100))
+		print(len(SetList))
+		print(len(SetList[0]), len(SetList[1]), len(SetList[2]))
 	elif height == -1:
 		maxSeaLevel = 0	
 		for el in elevationList:
@@ -136,6 +150,7 @@ def f3(filePath, height = -1, interval = 0.01):
 			totalLand1 = 0
 			aboveSea2 = 0
 			totalLand2 = 0
+			SetList = [] # For Counting Island Stuff
 			for i in range(0,len(latitudeList)):
 				for j in range(0,len(longitudeList)):
 					if elevationList[i*len(longitudeList)+j] > 0.0:
@@ -145,6 +160,50 @@ def f3(filePath, height = -1, interval = 0.01):
 						if elevationList[i*len(longitudeList)+j] > heightm:
 							aboveSea1 += verticalSpacing*averageHorizontalSpacing
 							aboveSea2 += verticalSpacing*horizontalSpacingList[i]
+					
+							#Counting Island Stuff
+							
+							FoundSets = []
+							if i != 0 and j != 0:
+								for l in range(0,len(SetList)):
+									if ( (i,j-1) in SetList[l] ) or ( (i-1,j-1) in SetList[l] ) or ( (i-1,j) in SetList[l] ) or ( (i-1,j+1) in SetList[l] ):
+										FoundSets.append(l)
+								if len(FoundSets) == 0:
+									s = {(i,j)}
+									SetList.append(s)
+								elif len(FoundSets) == 1:
+									SetList[FoundSets[0]].add((i,j))
+								elif len(FoundSets) == 2:
+									s = SetList[FoundSets[0]].union(SetList[FoundSets[1]])
+									del SetList[FoundSets[0]]
+									del SetList[FoundSets[1]]
+									s.add((i,j))
+									SetList.append(s)
+								elif len(FoundSets) > 2:
+									print("IMPOSSIBLE, YOU JUST BROKE LOGIC")
+							elif i == 0 and j != 0:
+								for l in range(0,len(SetList)):
+									if ( (i,j-1) in SetList[l] ):
+										FoundSets.append(l)
+								if len(FoundSets) == 0:
+									s = {(i,j)}
+									SetList.append(s)
+								elif len(FoundSets) == 1:
+									SetList[FoundSets[0]].add((i,j))
+							elif i != 0 and j == 0:
+								for l in range(0,len(SetList)):
+									if ( (i-1,j) in SetList[l] ) or ( (i-1,j+1) in SetList[l] ):
+										FoundSets.append(l)
+								if len(FoundSets) == 0:
+									s = {(i,j)}
+									SetList.append(s)
+								elif len(FoundSets) == 1:
+									SetList[FoundSets[0]].add((i,j))
+							elif i == 0 and j == 0:
+								SetList.append({(i,j)})
+							#END SET COUNTING
+							
+									
 					# else:
 					# 	print ' ',
 				# print(' ')
