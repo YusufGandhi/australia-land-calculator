@@ -1,5 +1,5 @@
 from functionality1 import f1
-from pathlib import Path
+# from pathlib import Path
 import matplotlib.pyplot as plt
 
 
@@ -28,6 +28,7 @@ def f2(filePath, meanArea, interval):
 	plt.show()
 	# return (total_area, intervalList)
 
+# f2('sydney250m.txt',0.278*0.231,0.01)
 
 
 # if(len(sys.argv) < 4):

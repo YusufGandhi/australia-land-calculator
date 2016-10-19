@@ -1,42 +1,5 @@
 import math
 import matplotlib.pyplot as plt
-# def f1(filePath, meanArea, seaHeight):
-# #Assumes filePath is correct and other parameters are valid.
-#   aboveSea = 0
-#   totalLand = 0
-#   with open (filePath) as f: #iterate through lines of data file
-#     for line in f:
-#       tokens = line.split()
-#       z = float(tokens[2])
-#       if z > seaHeight:
-#         aboveSea += meanArea
-#       if z > 0:
-#         totalLand += meanArea
-#   return (round(aboveSea,4), round(aboveSea/totalLand * 100,2))
-
-# def f2(filePath, meanArea, interval):
-# 	maxSeaLevel = 0	
-# 	with open (filePath) as f: #iterate through lines of data file
-# 		for line in f:
-# 			tokens = line.split()
-# 			z = float(tokens[2])
-# 			maxSeaLevel = max(z, maxSeaLevel)
-			
-# 	# print (maxSeaLevel)
-# 	total_area = []
-# 	intervalList = []
-# 	spacing = maxSeaLevel * interval
-# 	for i in range(0, int(1 / interval) + 1):
-# 		(area, percent) = f1(filePath, meanArea, i * spacing)
-# 		print("at sea level {:+.2f}: {:.1f} km^2 ({:.2f}%)".format(i * spacing, area, percent))
-# 		total_area.append(area)
-# 		intervalList.append(i * spacing)
-	
-# 	# plotting the graph
-# 	plt.plot(intervalList, total_area)
-# 	plt.ylabel('area above water')
-# 	plt.xlabel('sea level increase')
-# 	plt.show()
 
 
 def f3(filePath, height = -1, interval = 0.01):
@@ -84,11 +47,14 @@ def f3(filePath, height = -1, interval = 0.01):
 	# averageLongitude = sum(longitudeDifferenceList) / len(longitudeDifferenceList)
 	# averageLatitude = sum(latitudeDifferenceList) / len(latitudeDifferenceList)
 
-	verticalSpacing = averageLatitude * 40007/360
+	verticalSpacing = round(averageLatitude * 40007/360,3)
 	horizontalSpacingList = []
 	for lat in latitudeList:
 		horizontalSpacingList.append(40075/360 * abs(math.cos(math.radians(lat))) * averageLongitude)
-	averageHorizontalSpacing = sum(horizontalSpacingList) / len(horizontalSpacingList)
+	averageHorizontalSpacing = round(sum(horizontalSpacingList) / len(horizontalSpacingList),3)
+
+	print ("vertical spacing  ", verticalSpacing)
+	print ("Horizontal spacing", averageHorizontalSpacing)
 
 	if height >= 0:
 		aboveSea1 = 0
@@ -120,17 +86,19 @@ def f3(filePath, height = -1, interval = 0.01):
 		print("Area above sea level: {:.2f} km^2".format(aboveSea2))
 		print("Percent area above sea level: {:.2f}%".format(aboveSea2/totalLand2*100))
 	elif height == -1:
-		maxSeaLevel = 0	
-		for el in elevationList:
-			maxSeaLevel = max(el, maxSeaLevel)
+		# maxSeaLevel = 0	
+		# for el in elevationList:
+		# 	maxSeaLevel = max(el, maxSeaLevel)
+		maxSeaLevel = max(elevationList)
 				
 		# print (maxSeaLevel)
 		total_area1 = []
 		total_area2 = []
 		intervalList = []
+		interval = 0.01
 		spacing = maxSeaLevel * interval
 		for k in range(0, int(1 / interval) + 1):
-			#(area, percent) = f1(filePath, meanArea, i * spacing)
+			
 			# --- ABSTRACT ---
 			heightm = k * spacing
 			aboveSea1 = 0
@@ -152,30 +120,33 @@ def f3(filePath, height = -1, interval = 0.01):
 				# print(' ')
 			# --- END ABSTRACT ---
 
-			print("Approximation 1: at sea level {:+.2f}: {:.1f} km^2 ({:.2f}%)".format(i * spacing, aboveSea1, aboveSea1/totalLand1*100))
-			print("Approximation 2: at sea level {:+.2f}: {:.1f} km^2 ({:.2f}%)".format(i * spacing, aboveSea2, aboveSea1/totalLand1*100))
+			print("Approximation 1: at sea level {:+.2f}: {:.1f} km^2 ({:.2f}%)".format(k * spacing, aboveSea1, aboveSea1/totalLand1*100))
+			print("Approximation 2: at sea level {:+.2f}: {:.1f} km^2 ({:.2f}%)".format(k * spacing, aboveSea2, aboveSea1/totalLand1*100))
 			
 			total_area1.append(aboveSea1)
 			total_area2.append(aboveSea2)
 			
 			intervalList.append(k * spacing)
 	
-	# plotting the graph
-	# plt.figure(1)
-	plt.subplot(121)
-	plt.plot(intervalList, total_area1)
-	plt.title('Approximation 1')
-	plt.ylabel('area above water')
-	plt.xlabel('sea level increase')
+			# plotting the graph
+			# plt.figure(1)
 
-	# plt.figure(2)
-	plt.subplot(122)
-	plt.plot(intervalList, total_area2)
-	plt.title('Approximation 2')
-	plt.ylabel('area above water')
-	plt.xlabel('sea level increase')
+		print(averageLongitude)
+		print(averageLatitude)
+		plt.subplot(121)
+		plt.plot(intervalList, total_area1)
+		plt.title('Approximation 1')
+		plt.ylabel('area above water')
+		plt.xlabel('sea level increase')
 
-	plt.show()
+		# plt.figure(2)
+		plt.subplot(122)
+		plt.plot(intervalList, total_area2)
+		plt.title('Approximation 2')
+		plt.ylabel('area above water')
+		plt.xlabel('sea level increase')
+
+		plt.show()
 
 
-f3('sydney250m.txt')
+f3('tas2k.txt')
