@@ -1,6 +1,9 @@
 import math
 import matplotlib.pyplot as plt
 
+#global variable for togling images
+ind = 0
+
 #Takes in a filePath and extracts data into the 3 lists passed to the function.
 def extract(filePath, longitudeList, latitudeList, elevationList):
 	latitudeList.append(0)
@@ -75,7 +78,9 @@ def landAboveSea(lenLatitudeList, lenLongitudeList, elevationList, meanArea, lat
 	aboveSea2 = 0
 	totalLand2 = 0
 	SetList = []
+	picture = []
 	for i in range(0,lenLatitudeList):
+		row = []
 		for j in range(0,lenLongitudeList):
 			if elevationList[i*lenLongitudeList+j] > 0.0:
 				totalLand1 += meanArea
@@ -85,10 +90,16 @@ def landAboveSea(lenLatitudeList, lenLongitudeList, elevationList, meanArea, lat
 					aboveSea2 += latBasedAreaList[i]
 					
 					addNodeToSet(SetList, i,j)
-		
+					
+					row.append(1)
+				else:
+					row.append(0)
+			else:
+				row.append(0)
+		picture.append(row)
 	
 	nrIslands = len(SetList)
-	return (round(aboveSea1,4), round(aboveSea1/totalLand1 * 100,2), round(aboveSea2,4), round(aboveSea2/totalLand2 * 100,2), nrIslands)
+	return (round(aboveSea1,4), round(aboveSea1/totalLand1 * 100,2), round(aboveSea2,4), round(aboveSea2/totalLand2 * 100,2), nrIslands, picture)
 
 def f3(filePath, height = -1, interval = 0.01):
 	#Extract data from file.
@@ -115,7 +126,7 @@ def f3(filePath, height = -1, interval = 0.01):
 		latBasedAreaList.append(l*verticalSpacing)
 
 	if height >= 0: #User has specified a height so do just do 1 calc.
-		(fa1area, fa1percent, fa2area, fa2percent, nrIslands) = landAboveSea( \
+		(fa1area, fa1percent, fa2area, fa2percent, nrIslands, picture) = landAboveSea( \
 			len(latitudeList), len(longitudeList), elevationList, meanArea, \
 			latBasedAreaList, height)
 		
@@ -131,19 +142,26 @@ def f3(filePath, height = -1, interval = 0.01):
 		print("Percent area above sea level: {:.2f}%".format(fa2percent))
 		print("--------------------")
 		print("Number of disjoint land masses (Islands): {:}".format(nrIslands))
+		
+		plt.imshow(picture, extent=(0,len(picture[0]),0,len(picture)))
+		plt.show()	
+		
+		
 	elif height == -1:
 		#Find highest sea level
 		maxSeaLevel = 0	
 		for el in elevationList:
 			maxSeaLevel = max(el, maxSeaLevel)
 				
-
+		
+		allpictures = []
+		
 		total_area1 = []
 		total_area2 = []
 		intervalList = []
 		spacing = maxSeaLevel * interval
 		for k in range(0, int(1 / interval) + 1):
-			(fa1area, fa1percent, fa2area, fa2percent, nrIslands) = landAboveSea( \
+			(fa1area, fa1percent, fa2area, fa2percent, nrIslands, picture) = landAboveSea( \
 			len(latitudeList), len(longitudeList), elevationList, meanArea, \
 			latBasedAreaList, k * spacing)
 
@@ -153,23 +171,44 @@ def f3(filePath, height = -1, interval = 0.01):
 			total_area1.append(fa1area)
 			total_area2.append(fa2area)
 			intervalList.append(k * spacing)
+			
+			allpictures.append(picture)
+		
+		
+		import numpy as np
+		
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		ax.imshow(allpictures[0], extent=(0,len(allpictures[0][0]),0,len(allpictures[0])))
+		#ind = 0
+		def onclick(event):
+			global ind
+			ind += 1
+			if ind > int(1/interval):
+				ind = 0
+			ax.clear()
+			ax.imshow(allpictures[ind], extent=(0,len(allpictures[ind][0]),0,len(allpictures[ind])))
+			plt.draw()
+
+		cid = fig.canvas.mpl_connect('button_press_event', onclick)
 	
 		# plotting the graph
 		# plt.figure(1)
-		plt.subplot(121)
-		plt.plot(intervalList, total_area1)
-		plt.title('Approximation 1')
-		plt.ylabel('area above water')
-		plt.xlabel('sea level increase')
+		#plt.subplot(121)
+		#plt.plot(intervalList, total_area1)
+		#plt.title('Approximation 1')
+		#plt.ylabel('area above water')
+		#plt.xlabel('sea level increase')
 
 		# plt.figure(2)
-		plt.subplot(122)
-		plt.plot(intervalList, total_area2)
-		plt.title('Approximation 2')
-		plt.ylabel('area above water')
-		plt.xlabel('sea level increase')
+		#plt.subplot(122)
+		#plt.plot(intervalList, total_area2)
+		#plt.title('Approximation 2')
+		#plt.ylabel('area above water')
+		#plt.xlabel('sea level increase')
 
 		plt.show()
 
 
-f3('sydney250m.txt')
+f3('sydney250m.txt', interval=0.05)
+
