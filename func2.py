@@ -1,7 +1,6 @@
 from func1 import f1
 import matplotlib.pyplot as plt
 
-
 def f2(filePath, meanArea, interval):
 	maxSeaLevel = 0	
 	f = open(filePath,'r') #iterate through lines of data file
@@ -11,10 +10,11 @@ def f2(filePath, meanArea, interval):
 		maxSeaLevel = max(z, maxSeaLevel)
 	
 	f.close()		
-	# print (maxSeaLevel)
+	
+	# the main program to loop through the intervals
 	total_area = []
 	intervalList = []
-	spacing = maxSeaLevel * interval
+	spacing = maxSeaLevel * interval 
 	for i in range(0, int(1 / interval) + 1):
 		(area, percent) = f1(filePath, meanArea, i * spacing)
 		print("at sea level {:+.2f}: {:.1f} km^2 ({:.2f}%)".format(i * spacing, area, percent))

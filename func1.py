@@ -1,12 +1,9 @@
-import sys
-# from pathlib import Path
-
 def f1(filePath, meanArea, seaHeight):
 #Assumes filePath is correct and other parameters are valid.
-  aboveSea = 0
-  totalLand = 0
+  aboveSea = 0   # to store the the total area above the seaHeight parameter
+  totalLand = 0  # to store the the total area above sea level (0.0)
+  
   f = open(filePath,'r')
-  # with open (filePath) as f: #iterate through lines of data file
   for line in f:
     tokens = line.split()
     z = float(tokens[2])
