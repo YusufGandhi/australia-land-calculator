@@ -1,4 +1,4 @@
-from functionality1 import f1
+from func1 import f1
 import matplotlib.pyplot as plt
 
 
