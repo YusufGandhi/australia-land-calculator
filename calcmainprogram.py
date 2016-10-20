@@ -18,14 +18,34 @@ import argparse
 if len(sys.argv) > 1: #User provided args
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-f","--file", help="Input data file.")
-	parser.add_argument("-h","--height", help="New sea level height.", type=float)
+	parser.add_argument("-l","--height", help="New sea level height.", type=float)
 	parser.add_argument("-i","--interval", help="Interval of sea levels.", type=int)
 	parser.add_argument("-m","--image", help="Display an image.", action="store_true")
 	args = parser.parse_args()
-	if args.image:
-		f4i(args.file, height=args.height, interval=args.interval)
-	else:
-		f4(args.file, height=args.height, interval=args.interval)
+
+	file_name = args.file
+	filevalid = True
+	try:		
+		f = open(file_name, 'r')
+	except FileNotFoundError:
+		print("[Error] Cannot open", file_name)
+		filevalid = False
+	
+	if filevalid:
+		if args.image:
+			if args.height != None:
+				f4i(args.file, height=args.height)
+			elif args.interval != None:
+				f4i(args.file, interval=(1/args.interval))
+			else:
+				f4i(args.file)
+		else:
+			if args.height != None:
+				f4(args.file, height=args.height)
+			elif args.interval != None:
+				f4(args.file, interval=(1/args.interval))
+			else:
+				f4(args.file)
 else:
 
 	print("Welcome to AUSTRALIA LAND CALCULATOR")
