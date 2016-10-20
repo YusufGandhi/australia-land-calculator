@@ -1,6 +1,8 @@
 import math
 import matplotlib.pyplot as plt
 
+#See func4 for more detailed comments on how island counting works.
+
 #global variable for togling images
 ind = 0
 
@@ -68,10 +70,11 @@ def addNodeToSet(SetList, i,j ):
 			SetList[FoundSets[0]].add((i,j))
 	elif i == 0 and j == 0:
 		SetList.append({(i,j)})
-	#END SET COUNTING		
-	
 
 #Returns aproximation 1 and 2 result and number of islands.
+#Takes in the length of latitude and longitude list (dimension of data grid),
+# meanArea for approximation 1, latBasedAreaList for approximation 2 and the new sea level height.
+# Also returns picture array which for each coordinant is 0 for sea and 1 for land.
 def landAboveSea(lenLatitudeList, lenLongitudeList, elevationList, meanArea, latBasedAreaList, height):
 	aboveSea1 = 0
 	totalLand1 = 0
@@ -143,6 +146,7 @@ def f4i(filePath, height = -1, interval = 0.01):
 		print("--------------------")
 		print("Number of disjoint land masses (Islands): {:}".format(nrIslands))
 		
+		#Show picture 2D array as image.
 		plt.imshow(picture, extent=(0,len(picture[0]),0,len(picture)))
 		plt.show()	
 		
@@ -153,7 +157,7 @@ def f4i(filePath, height = -1, interval = 0.01):
 		for el in elevationList:
 			maxSeaLevel = max(el, maxSeaLevel)
 				
-		
+		#Create picture for each sea level
 		allpictures = []
 		
 		total_area1 = []
@@ -175,13 +179,12 @@ def f4i(filePath, height = -1, interval = 0.01):
 			allpictures.append(picture)
 		
 		
-		import numpy as np
-		
+		#Image plotting
 		fig = plt.figure()
 		ax = fig.add_subplot(111)
 		ax.imshow(allpictures[0], extent=(0,len(allpictures[0][0]),0,len(allpictures[0])))
 		#ind = 0
-		def onclick(event):
+		def onclick(event): #event to allow click togle to click through image slideshow.
 			global ind
 			ind += 1
 			if ind > int(1/interval):
