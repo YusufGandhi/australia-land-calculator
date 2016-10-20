@@ -7,8 +7,12 @@ def f1(filePath, meanArea, seaHeight):
   for line in f:
     tokens = line.split()
     z = float(tokens[2])
+    
+    # adding up the above sea level height area
     if z > seaHeight:
       aboveSea += meanArea
+    
+    # adding up the area above 0.0 metre sea level
     if z > 0:
       totalLand += meanArea
   f.close()
