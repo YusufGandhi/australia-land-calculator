@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 
 def f3(filePath, height = -1, interval = 0.01):
+	print(interval)
 	longitudeList = []
 	latitudeList = [0]
 	elevationList = []
@@ -53,13 +54,9 @@ def f3(filePath, height = -1, interval = 0.01):
 		horizontalSpacingList.append(40075/360 * abs(math.cos(math.radians(lat))) * averageLongitude)
 	averageHorizontalSpacing = round(sum(horizontalSpacingList) / len(horizontalSpacingList),3)
 
-	print ("vertical spacing  ", verticalSpacing)
-	print ("Horizontal spacing", averageHorizontalSpacing)
-
 	if height >= 0:
 		aboveSea1 = 0
 		totalLand1 = 0
-		
 		aboveSea2 = 0
 		totalLand2 = 0
 		for i in range(0,len(latitudeList)):
@@ -95,7 +92,6 @@ def f3(filePath, height = -1, interval = 0.01):
 		total_area1 = []
 		total_area2 = []
 		intervalList = []
-		interval = 0.01
 		spacing = maxSeaLevel * interval
 		for k in range(0, int(1 / interval) + 1):
 			
@@ -103,7 +99,6 @@ def f3(filePath, height = -1, interval = 0.01):
 			heightm = k * spacing
 			aboveSea1 = 0
 			totalLand1 = 0
-			
 			aboveSea2 = 0
 			totalLand2 = 0
 			for i in range(0,len(latitudeList)):
@@ -115,24 +110,21 @@ def f3(filePath, height = -1, interval = 0.01):
 						if elevationList[i*len(longitudeList)+j] > heightm:
 							aboveSea1 += verticalSpacing*averageHorizontalSpacing
 							aboveSea2 += verticalSpacing*horizontalSpacingList[i]
-					# else:
-					# 	print ' ',
-				# print(' ')
 			# --- END ABSTRACT ---
 
 			print("Approximation 1: at sea level {:+.2f}: {:.1f} km^2 ({:.2f}%)".format(k * spacing, aboveSea1, aboveSea1/totalLand1*100))
-			print("Approximation 2: at sea level {:+.2f}: {:.1f} km^2 ({:.2f}%)".format(k * spacing, aboveSea2, aboveSea1/totalLand1*100))
+			print("Approximation 2: at sea level {:+.2f}: {:.1f} km^2 ({:.2f}%)".format(k * spacing, aboveSea2, aboveSea2/totalLand2*100))
+
 			
 			total_area1.append(aboveSea1)
 			total_area2.append(aboveSea2)
 			
 			intervalList.append(k * spacing)
 	
-			# plotting the graph
-			# plt.figure(1)
 
-		print(averageLongitude)
-		print(averageLatitude)
+		# plotting the graph
+		# plt.figure(1)
+
 		plt.subplot(121)
 		plt.plot(intervalList, total_area1)
 		plt.title('Approximation 1')
@@ -148,5 +140,3 @@ def f3(filePath, height = -1, interval = 0.01):
 
 		plt.show()
 
-
-f3('tas2k.txt')
