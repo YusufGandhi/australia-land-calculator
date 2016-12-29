@@ -4,7 +4,7 @@ User documentation:
    functionality levels available.
 
    a. Functionality level 1: calculate the area above a certain sea level height using
-           					 the given mean vertical spacing & mean horizontal spacing values
+           					     the given mean vertical spacing & mean horizontal spacing values
 
    b. Functionality level 2: calculate the area above an interval of sea level heights 
                              and shows the graph related to the produced output using 
@@ -12,11 +12,11 @@ User documentation:
                              and the interval (default interval is 1% of the maximum sea level)
 
    c. Functionality level 3: calculate the area above a certain sea level identical to 1st and
-   							 2nd level functionalities using 1st and 2nd approximations 
+   							     2nd level functionalities using 1st and 2nd approximations 
    			                 described in the assignment specifications.
 
    d. Functionality level 4: identical to functionality level 3 and, additionally, it produces the number of 
-   							 distinct island separated by sea / water.
+   							     distinct island separated by sea / water.
 
 
 2. There are a couple of ways to start the program. For a user-friendly command line interface,
@@ -54,8 +54,6 @@ Required Libraries:
 - Matplotlib
 
 
-Member:
--------
-Edward Kopka (u5351945)
-Yusuf Putra  (u5705518)
-Shinta Dewi  (u5759170)
+Contributor:
+------------
+Edward Kopka
